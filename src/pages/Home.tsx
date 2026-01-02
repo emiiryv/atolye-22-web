@@ -1,9 +1,28 @@
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SectionTitle from '../components/SectionTitle';
 import PrimaryButton from '../components/PrimaryButton';
 import heroPoster from '../assets/atolye22-poster.png';
 
+
+const HERO_GALLERY = [
+  '/perde/perde1.png',
+  '/perde/perde2.png',
+  '/perde/perde3.png',
+  '/perde/perde4.png',
+];
+
 export default function Home() {
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  const prevHero = useCallback(() => {
+    setHeroIndex((i) => (i - 1 + HERO_GALLERY.length) % HERO_GALLERY.length);
+  }, []);
+
+  const nextHero = useCallback(() => {
+    setHeroIndex((i) => (i + 1) % HERO_GALLERY.length);
+  }, []);
+
   return (
     <div className="space-y-16">
       {/* HERO */}
@@ -32,14 +51,61 @@ export default function Home() {
         </div>
 
         <div className="relative">
-            <div className="aspect-[16/9] rounded-3xl bg-gradient-to-br from-atelierAccent via-[#4F6043] to-slate-900 border border-[#4F6043]/60 shadow-[0_0_80px_rgba(79,96,67,0.35)] p-4">
-                <img
-                src={heroPoster}
-                alt="Atölye 22 Logo"
-                className="h-full w-full object-cover rounded-2xl"
-                />
-            </div>
-            </div>
+          <div className="aspect-[16/9] rounded-3xl overflow-hidden relative">
+            <img
+              src={HERO_GALLERY[heroIndex]}
+              alt="Atölye 22 - Hero"
+              className="h-full w-full object-cover"
+              loading="eager"
+              onError={(e) => {
+                // Eğer public/hero görselleri henüz yoksa fallback
+                e.currentTarget.src = heroPoster;
+              }}
+            />
+
+            {/* Sol ok */}
+            <button
+              type="button"
+              onClick={prevHero}
+              aria-label="Önceki görsel"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-black/40 backdrop-blur border border-white/10 text-white hover:bg-black/55 active:scale-95 transition flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-5 w-5"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            {/* Sağ ok */}
+            <button
+              type="button"
+              onClick={nextHero}
+              aria-label="Sonraki görsel"
+              className="absolute right-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-black/40 backdrop-blur border border-white/10 text-white hover:bg-black/55 active:scale-95 transition flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-5 w-5"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* KISA HAKKIMIZDA */}
