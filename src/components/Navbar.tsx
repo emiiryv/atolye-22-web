@@ -55,12 +55,14 @@ export default function Navbar() {
           className="lg:hidden inline-flex items-center justify-center rounded-full p-2 text-slate-200 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent"
           aria-label="Menüyü aç"
           aria-expanded={open}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpen((v) => !v)}
         >
           <span className="sr-only">Menüyü aç</span>
-          <span className="block h-0.5 w-6 bg-slate-200 rounded mb-1" />
-          <span className="block h-0.5 w-6 bg-slate-200 rounded mb-1" />
-          <span className="block h-0.5 w-6 bg-slate-200 rounded" />
+          <span aria-hidden className="flex flex-col gap-1">
+            <span className="block h-0.5 w-6 bg-slate-200 rounded" />
+            <span className="block h-0.5 w-6 bg-slate-200 rounded" />
+            <span className="block h-0.5 w-6 bg-slate-200 rounded" />
+          </span>
         </button>
       </div>
 
@@ -88,8 +90,11 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
           >
             <span className="sr-only">Menüyü kapat</span>
-            <span className="block h-0.5 w-5 bg-slate-200 rotate-45 translate-y-[3px]" />
-            <span className="block h-0.5 w-5 bg-slate-200 -rotate-45 -translate-y-[3px]" />
+            <span aria-hidden className="flex flex-col gap-1">
+              <span className="block h-0.5 w-5 bg-slate-200 rounded" />
+              <span className="block h-0.5 w-5 bg-slate-200 rounded" />
+              <span className="block h-0.5 w-5 bg-slate-200 rounded" />
+            </span>
           </button>
         </div>
 
