@@ -47,19 +47,32 @@ type SliderProps = {
 
 function TeamSlider({ title, members }: SliderProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isScrollingRef = useRef(false);
 
   const scroll = (direction: 'left' | 'right') => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Mobilde ve desktopta "sayfa" kadar kaydır: görünür alan genişliği.
-    // Bu sayede mobilde 1 kart, desktopta yaklaşık 3-4 kart birlikte kayar.
+    // Prevent rapid spamming from stacking smooth scroll animations.
+    if (isScrollingRef.current) return;
+    isScrollingRef.current = true;
+
+    // Scroll by ~one viewport width (keeps 2 cards visible on mobile).
     const step = Math.max(240, Math.floor(container.clientWidth * 0.92));
 
-    container.scrollBy({
-      left: direction === 'left' ? -step : step,
+    const maxLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+    const nextLeft = direction === 'left' ? container.scrollLeft - step : container.scrollLeft + step;
+    const clampedLeft = Math.min(maxLeft, Math.max(0, nextLeft));
+
+    container.scrollTo({
+      left: clampedLeft,
       behavior: 'smooth',
     });
+
+    // Release the lock shortly after the smooth scroll should have settled.
+    window.setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 350);
   };
 
   return (
@@ -80,7 +93,9 @@ function TeamSlider({ title, members }: SliderProps) {
         <button
           type="button"
           onClick={() => scroll('left')}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-slate-700 bg-black/35 backdrop-blur flex items-center justify-center text-xs text-slate-200/90 hover:bg-black/60 hover:border-slate-400 transition-colors opacity-80 hover:opacity-100"
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-slate-700 bg-black/35 backdrop-blur flex items-center justify-center text-xs text-slate-200/90 hover:bg-black/60 hover:border-slate-400 transition-colors opacity-80 hover:opacity-100 touch-none select-none"
           aria-label="Sola kaydır"
         >
           &#8249;
@@ -90,7 +105,9 @@ function TeamSlider({ title, members }: SliderProps) {
         <button
           type="button"
           onClick={() => scroll('right')}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-slate-700 bg-black/35 backdrop-blur flex items-center justify-center text-xs text-slate-200/90 hover:bg-black/60 hover:border-slate-400 transition-colors opacity-80 hover:opacity-100"
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-slate-700 bg-black/35 backdrop-blur flex items-center justify-center text-xs text-slate-200/90 hover:bg-black/60 hover:border-slate-400 transition-colors opacity-80 hover:opacity-100 touch-none select-none"
           aria-label="Sağa kaydır"
         >
           &#8250;

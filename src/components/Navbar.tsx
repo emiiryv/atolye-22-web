@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import logo from '../assets/atolye22-logo.png';
 import { NavLink } from 'react-router-dom';
 
@@ -13,6 +13,29 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  // Mobilde kaydırma sırasında yanlışlıkla menü açılmasını engellemek için
+  // "tap" (kısa dokunuş) ile "swipe/scroll" ayrımı.
+  const TAP_MOVE_PX = 10;
+  const menuTap = useRef({ x: 0, y: 0, moved: false });
+
+  const onMenuPointerDown = (e: React.PointerEvent) => {
+    menuTap.current = { x: e.clientX, y: e.clientY, moved: false };
+  };
+
+  const onMenuPointerMove = (e: React.PointerEvent) => {
+    const dx = Math.abs(e.clientX - menuTap.current.x);
+    const dy = Math.abs(e.clientY - menuTap.current.y);
+    if (dx > TAP_MOVE_PX || dy > TAP_MOVE_PX) menuTap.current.moved = true;
+  };
+
+  const toggleMenuIfTap = () => {
+    if (!menuTap.current.moved) setOpen((v) => !v);
+  };
+
+  const closeMenuIfTap = () => {
+    if (!menuTap.current.moved) setOpen(false);
+  };
+
   // Menü açıkken arkayı kaydırmayı engelle
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -22,7 +45,9 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <header className="border-b border-slate-800 bg-black/40 backdrop-blur sticky top-0 z-50">
+    <header
+      className={`border-b border-slate-800 sticky top-0 ${open ? 'z-30 bg-black' : 'z-50 bg-black/40 backdrop-blur'} `}
+    >
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <div className="flex items-center gap-3">
@@ -52,10 +77,12 @@ export default function Navbar() {
         {/* Mobile hamburger (desktopta gizli) */}
         <button
           type="button"
-          className="lg:hidden inline-flex items-center justify-center rounded-full p-2 text-slate-200 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent"
           aria-label="Menüyü aç"
           aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+          onPointerDown={onMenuPointerDown}
+          onPointerMove={onMenuPointerMove}
+          onPointerUp={toggleMenuIfTap}
+          className="lg:hidden inline-flex items-center justify-center rounded-full p-2 text-slate-200 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
         >
           <span className="sr-only">Menüyü aç</span>
           <span aria-hidden className="flex flex-col gap-1">
@@ -68,7 +95,7 @@ export default function Navbar() {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/85 backdrop-blur-[2px] lg:hidden z-40 transition-opacity duration-200 ${
+        className={`fixed inset-0 bg-black lg:hidden z-40 transition-opacity duration-200 ${
           open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setOpen(false)}
@@ -76,7 +103,7 @@ export default function Navbar() {
 
       {/* Right drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-72 lg:hidden z-50 bg-[#121212] border-l border-white/10 shadow-2xl transform transition-transform duration-200 ease-out ${
+        className={`fixed top-0 right-0 h-full w-72 lg:hidden z-50 bg-black border-l border-white/10 shadow-2xl transform transition-transform duration-200 ease-out ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -85,9 +112,11 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-full p-2 text-slate-300 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent"
+            className="inline-flex items-center justify-center rounded-full p-2 text-slate-300 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
             aria-label="Menüyü kapat"
-            onClick={() => setOpen(false)}
+            onPointerDown={onMenuPointerDown}
+            onPointerMove={onMenuPointerMove}
+            onPointerUp={closeMenuIfTap}
           >
             <span className="sr-only">Menüyü kapat</span>
             <span aria-hidden className="flex flex-col gap-1">
