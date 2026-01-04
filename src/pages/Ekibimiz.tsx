@@ -46,78 +46,82 @@ type SliderProps = {
 };
 
 function TeamSlider({ title, members }: SliderProps) {
-    const containerRef = useRef<HTMLDivElement | null>(null);
-  
-    const scroll = (direction: 'left' | 'right') => {
-      const container = containerRef.current;
-      if (!container) return;
-  
-      const firstChild = container.firstElementChild as HTMLElement | null;
-      const cardWidth = firstChild ? firstChild.clientWidth + 16 : 260; // 16px ≈ gap-4
-  
-      container.scrollBy({
-        left: direction === 'left' ? -cardWidth : cardWidth,
-        behavior: 'smooth',
-      });
-    };
-  
-    return (
-      <section className="space-y-4">
-        {/* Başlık satırı */}
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">{title}</h2>
-        </div>
-  
-        {/* Oklar iki uçta, ortada slider */}
-        <div className="flex items-center gap-3">
-          {/* Sol ok */}
-          <button
-            type="button"
-            onClick={() => scroll('left')}
-            className="h-8 w-8 rounded-full border border-slate-600 flex items-center justify-center text-xs text-slate-200 hover:bg-slate-700/70 hover:border-slate-400 transition-colors shrink-0"
-            aria-label="Sola kaydır"
-          >
-            &#8249;
-          </button>
-  
-          {/* Kartların olduğu scroll alanı */}
-          <div className="relative flex-1 max-w-full">
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Mobilde ve desktopta "sayfa" kadar kaydır: görünür alan genişliği.
+    // Bu sayede mobilde 1 kart, desktopta yaklaşık 3-4 kart birlikte kayar.
+    const step = Math.max(240, Math.floor(container.clientWidth * 0.92));
+
+    container.scrollBy({
+      left: direction === 'left' ? -step : step,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-lg font-semibold">{title}</h2>
+      </div>
+
+      {/*
+        Mobil uyumlu slider:
+        - Yatay taşma yok (wrapper overflow-hidden)
+        - Swipe ile kaydırılabilir (overflow-x-auto + snap)
+        - Scrollbar gizli
+        - Oklar içeride overlay (layout bozmaz)
+      */}
+      <div className="relative overflow-hidden">
+        {/* Sol ok (overlay) */}
+        <button
+          type="button"
+          onClick={() => scroll('left')}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-slate-700 bg-black/35 backdrop-blur flex items-center justify-center text-xs text-slate-200/90 hover:bg-black/60 hover:border-slate-400 transition-colors opacity-80 hover:opacity-100"
+          aria-label="Sola kaydır"
+        >
+          &#8249;
+        </button>
+
+        {/* Sağ ok (overlay) */}
+        <button
+          type="button"
+          onClick={() => scroll('right')}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-slate-700 bg-black/35 backdrop-blur flex items-center justify-center text-xs text-slate-200/90 hover:bg-black/60 hover:border-slate-400 transition-colors opacity-80 hover:opacity-100"
+          aria-label="Sağa kaydır"
+        >
+          &#8250;
+        </button>
+
+        {/* Kartların olduğu scroll alanı */}
+        <div
+          ref={containerRef}
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-10 py-2 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {members.map((person) => (
             <div
-              ref={containerRef}
-              className="flex gap-4 overflow-x-hidden scroll-smooth snap-x snap-mandatory pt-1 pb-3 justify-center md:justify-start"
+              key={person.name}
+              className="snap-center flex-shrink-0 w-[46vw] max-w-[240px] sm:w-64 md:w-64"
             >
-              {members.map((person) => (
-                <div
-                  key={person.name}
-                  className="snap-start flex-shrink-0 w-64 sm:w-72"
-                >
-                  <TeamCard
-                    name={person.name}
-                    role={person.role}
-                    imageUrl={person.imageUrl}
-                  />
-                </div>
-              ))}
+              <TeamCard
+                name={person.name}
+                role={person.role}
+                imageUrl={person.imageUrl}
+              />
             </div>
-          </div>
-  
-          {/* Sağ ok */}
-          <button
-            type="button"
-            onClick={() => scroll('right')}
-            className="h-8 w-8 rounded-full border border-slate-600 flex items-center justify-center text-xs text-slate-200 hover:bg-slate-700/70 hover:border-slate-400 transition-colors shrink-0"
-            aria-label="Sağa kaydır"
-          >
-            &#8250;
-          </button>
+          ))}
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
+}
 
 export default function Ekibimiz() {
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 overflow-x-hidden">
       <SectionTitle
         title="Ekibimiz"
         subtitle="Atölye 22’nin arkasındaki yaratıcı ekip."
