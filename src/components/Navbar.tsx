@@ -68,7 +68,7 @@ export default function Navbar() {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/45 lg:hidden transition-opacity duration-200 ${
+        className={`fixed inset-0 bg-black/85 backdrop-blur-[2px] lg:hidden z-40 transition-opacity duration-200 ${
           open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setOpen(false)}
@@ -76,7 +76,7 @@ export default function Navbar() {
 
       {/* Right drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-72 lg:hidden bg-neutral-900/95 border-l border-neutral-800 shadow-2xl transform transition-transform duration-200 ease-out ${
+        className={`fixed top-0 right-0 h-full w-72 lg:hidden z-50 bg-[#121212] border-l border-white/10 shadow-2xl transform transition-transform duration-200 ease-out ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
