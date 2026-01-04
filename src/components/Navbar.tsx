@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from '../assets/atolye22-logo.png';
 import { NavLink } from 'react-router-dom';
 
@@ -13,29 +13,6 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
-  // Mobilde kaydırma sırasında yanlışlıkla menü açılmasını engellemek için
-  // "tap" (kısa dokunuş) ile "swipe/scroll" ayrımı.
-  const TAP_MOVE_PX = 10;
-  const menuTap = useRef({ x: 0, y: 0, moved: false });
-
-  const onMenuPointerDown = (e: React.PointerEvent) => {
-    menuTap.current = { x: e.clientX, y: e.clientY, moved: false };
-  };
-
-  const onMenuPointerMove = (e: React.PointerEvent) => {
-    const dx = Math.abs(e.clientX - menuTap.current.x);
-    const dy = Math.abs(e.clientY - menuTap.current.y);
-    if (dx > TAP_MOVE_PX || dy > TAP_MOVE_PX) menuTap.current.moved = true;
-  };
-
-  const toggleMenuIfTap = () => {
-    if (!menuTap.current.moved) setOpen((v) => !v);
-  };
-
-  const closeMenuIfTap = () => {
-    if (!menuTap.current.moved) setOpen(false);
-  };
-
   // Menü açıkken arkayı kaydırmayı engelle
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -46,7 +23,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`border-b border-slate-800 sticky top-0 ${open ? 'z-30 bg-black' : 'z-50 bg-black/40 backdrop-blur'} `}
+      className="border-b border-slate-800 sticky top-0 z-[60] bg-black"
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
@@ -79,9 +56,7 @@ export default function Navbar() {
           type="button"
           aria-label="Menüyü aç"
           aria-expanded={open}
-          onPointerDown={onMenuPointerDown}
-          onPointerMove={onMenuPointerMove}
-          onPointerUp={toggleMenuIfTap}
+          onClick={() => setOpen((v) => !v)}
           className="lg:hidden inline-flex items-center justify-center rounded-full p-2 text-slate-200 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
         >
           <span className="sr-only">Menüyü aç</span>
@@ -95,7 +70,7 @@ export default function Navbar() {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black lg:hidden z-40 transition-opacity duration-200 ${
+        className={`fixed inset-0 bg-black lg:hidden z-50 transition-opacity duration-200 ${
           open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setOpen(false)}
@@ -103,7 +78,7 @@ export default function Navbar() {
 
       {/* Right drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-72 lg:hidden z-50 bg-black border-l border-white/10 shadow-2xl transform transition-transform duration-200 ease-out ${
+        className={`fixed top-0 right-0 h-full w-72 lg:hidden z-[70] bg-black border-l border-white/10 shadow-2xl transform transition-transform duration-200 ease-out ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -114,9 +89,7 @@ export default function Navbar() {
             type="button"
             className="inline-flex items-center justify-center rounded-full p-2 text-slate-300 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
             aria-label="Menüyü kapat"
-            onPointerDown={onMenuPointerDown}
-            onPointerMove={onMenuPointerMove}
-            onPointerUp={closeMenuIfTap}
+            onClick={() => setOpen(false)}
           >
             <span className="sr-only">Menüyü kapat</span>
             <span aria-hidden className="flex flex-col gap-1">
@@ -135,10 +108,10 @@ export default function Navbar() {
                   to={item.to}
                   onClick={() => setOpen(false)}
                   className={({ isActive }) =>
-                    `block rounded-xl px-3 py-2 text-sm transition-colors ${
+                    `block px-3 py-2 text-sm transition-colors ${
                       isActive
-                        ? 'bg-atelierAccent/10 text-atelierAccent'
-                        : 'text-slate-200 hover:bg-white/5 hover:text-white'
+                        ? 'text-atelierAccent font-medium'
+                        : 'text-slate-200 hover:text-white'
                     }`
                   }
                 >
