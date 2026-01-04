@@ -22,9 +22,7 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <header
-      className="border-b border-slate-800 sticky top-0 z-[60] bg-black"
-    >
+    <header className="border-b border-zinc-700 sticky top-0 z-[60] bg-[#242424]">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <div className="flex items-center gap-3">
@@ -57,7 +55,7 @@ export default function Navbar() {
           aria-label="Menüyü aç"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="lg:hidden inline-flex items-center justify-center rounded-full p-2 text-slate-200 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
+          className="lg:hidden inline-flex items-center justify-center rounded-full p-2 text-slate-200 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
         >
           <span className="sr-only">Menüyü aç</span>
           <span aria-hidden className="flex flex-col gap-1">
@@ -70,7 +68,7 @@ export default function Navbar() {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black lg:hidden z-50 transition-opacity duration-200 ${
+        className={`fixed inset-0 bg-black/70 lg:hidden z-50 transition-opacity duration-200 ${
           open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setOpen(false)}
@@ -78,16 +76,16 @@ export default function Navbar() {
 
       {/* Right drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-72 lg:hidden z-[70] bg-black border-l border-white/10 shadow-2xl transform transition-transform duration-200 ease-out ${
+        className={`fixed top-0 right-0 h-full w-72 lg:hidden z-[70] bg-[#242424] border-l border-zinc-700 shadow-2xl transform transition-transform duration-200 ease-out ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-800">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-700">
           <span className="text-sm font-medium text-slate-200">Menü</span>
 
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-full p-2 text-slate-300 hover:text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
+            className="inline-flex items-center justify-center rounded-full p-2 text-slate-300 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-atelierAccent touch-manipulation select-none"
             aria-label="Menüyü kapat"
             onClick={() => setOpen(false)}
           >
