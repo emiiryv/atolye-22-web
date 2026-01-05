@@ -81,7 +81,7 @@ export default function Navbar() {
         }`}
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-700">
-          <span className="text-sm font-medium text-slate-200">Menü</span>
+          <span className="text-sm -medium text-slate-200">Menü</span>
 
           <button
             type="button"
